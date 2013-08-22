@@ -1,0 +1,48 @@
+public static DataSet DTListar(int RutCliente)
+{
+    /*
+     * "<RESULTADO>
+            <RutCliente>995279800</RutCliente>
+        </RESULTADO>"
+     * */
+    String _Query = @"
+        SELECT *
+        FROM dbo.TABLA tbl
+
+        WHERE tbl.Codigo = 8
+        ";
+    //MEJORAR: Ojo con los espacios al concatenar para que no quede pegado.
+    _Query += " AND tbl.RutCliente = " + RutCliente.ToString();
+    _Query += " AND tbl.RutCliente = " + RutCliente.ToString();
+    
+    cConnectionDB.SqlConnectionDB _Connect = new cConnectionDB.SqlConnectionDB("BASE");
+    DataSet _DS;
+    enumStatus Status; //copy-paste, revisar.
+    String Error;
+    String Stack;
+
+    try
+    {
+        Status = enumStatus.Loading;
+        _Connect.Execute(_Query);
+        _DS = _Connect.QueryDataSet();
+
+        if (_DS.Tables["Query"].Rows.Count.Equals(0))
+        {
+            Status = enumStatus.NotFound;
+        }
+        else
+        {
+            Status = enumStatus.Already;
+        }
+    }
+    catch (Exception _Error)
+    {
+        _DS = null;
+        Status = enumStatus.ErrorLoad;
+        Error = _Error.StackTrace;
+        Stack = _Error.Message;
+    }
+
+    return _DS;
+}
